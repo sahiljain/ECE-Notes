@@ -999,90 +999,36 @@ body .markdown-body
     page-break-after: avoid;
   }
 }
-</style><title>notes-computers</title></head><body><article class="markdown-body"><h1 id="computers"><a name="user-content-computers" href="#computers" class="headeranchor-link"  aria-hidden="true"><span class="headeranchor"></span></a>Computers</h1>
-<h2 id="1-types-of-computers-classes"><a name="user-content-1-types-of-computers-classes" href="#1-types-of-computers-classes" class="headeranchor-link"  aria-hidden="true"><span class="headeranchor"></span></a>1. Types of Computers (Classes)</h2>
+</style><title>notes-subroutines</title></head><body><article class="markdown-body"><h1 id="subroutines"><a name="user-content-subroutines" href="#subroutines" class="headeranchor-link"  aria-hidden="true"><span class="headeranchor"></span></a>Subroutines</h1>
+<h3 id="the-stack"><a name="user-content-the-stack" href="#the-stack" class="headeranchor-link"  aria-hidden="true"><span class="headeranchor"></span></a>The Stack</h3>
 <ul>
-<li><strong>Embedded</strong> (99% of market, microwaves, braking, single purpose)</li>
-<li><strong>Personal</strong> (1% of market, desktop, laptop, tablet, multipurpose)</li>
-<li><strong>Server</strong> (&lt;1% of market, shared by many users over network, mainframe, supercomputer, cloud computer)</li>
+<li>LIFO</li>
+<li>Each process has a call stack that starts at high memory addresses and grows lower</li>
+<li>Used for local variables and parameter passing</li>
+<li>R13 is the Stack Pointer (SP) which points to the address of the top of the stack</li>
+<li>Eg. push [R0] onto stack: <code>STR R0, [sp, #-4]!</code></li>
+<li>Eg. pop from stack into R0: <code>LDR R0, [sp], #4</code></li>
 </ul>
-<h2 id="2-5-functional-units"><a name="user-content-2-5-functional-units" href="#2-5-functional-units" class="headeranchor-link"  aria-hidden="true"><span class="headeranchor"></span></a>2. 5 Functional Units</h2>
-<p>A computer is a programmable device that can store, retrieve, and process data.</p>
+<h3 id="calling-a-subroutine"><a name="user-content-calling-a-subroutine" href="#calling-a-subroutine" class="headeranchor-link"  aria-hidden="true"><span class="headeranchor"></span></a>Calling a Subroutine</h3>
 <ul>
-<li><strong>Input</strong> (keyboard, mouse, camera, network)</li>
-<li><strong>Output</strong> (printer, monitor, network)</li>
-<li><strong>Arithmetic/Logic</strong> (ALU, operations on registers)</li>
-<li><strong>Memory</strong> (stores data and machine instructions, organized into linear array of bytes, accessed by byte address)</li>
-<li><strong>Control</strong> (interprets instructions, fetches operands, controls ALU)</li>
-</ul>
-<p><img alt="Processor Basic" src="http://sahiljain.ca/media/processor1.jpg" title="Basic Processor" /></p>
-<h2 id="3-instruction-execution"><a name="user-content-3-instruction-execution" href="#3-instruction-execution" class="headeranchor-link"  aria-hidden="true"><span class="headeranchor"></span></a>3. Instruction Execution</h2>
-<h4 id="five-steps-of-instruction-execution"><a name="user-content-five-steps-of-instruction-execution" href="#five-steps-of-instruction-execution" class="headeranchor-link"  aria-hidden="true"><span class="headeranchor"></span></a>Five steps of Instruction Execution</h4>
-<ol>
-<li><strong>Instruction Fetch</strong><ul>
-<li>Copy PC contents to MAR</li>
-<li>Assert Read signal</li>
-<li>Wait for memory response, and copy MDR contents to IR</li>
-<li>Increment PC</li>
+<li>Branch to subroutine instructions and store the return address in the link register</li>
+<li>PC-relative: <code>BL{cond} label</code><ul>
+<li><strong>Branch and Link</strong></li>
+<li>Offset +-16mb</li>
+<li>R14 &lt;- [PC]</li>
+<li>PC &lt;- [PC] + offset</li>
 </ul>
 </li>
-<li><strong>Instruction Decode</strong><ul>
-<li>Interpret bits in IR</li>
+<li>Register indirect: <code>BLX{cond} Rn</code><ul>
+<li><strong>Branch Link Exchange</strong></li>
+<li>Offset +-2GB</li>
+<li>R14 &lt;- [PC]</li>
+<li>PC &lt;- [Rn]</li>
 </ul>
 </li>
-<li><strong>Operand Fetch</strong><ul>
-<li>Read necessary data from registers/extract constants from IR</li>
+<li>Return using <strong>Branch Exchange</strong><ul>
+<li><code>BX{cond} Rn</code></li>
+<li>Eg. <code>BX lr</code>: PC &lt;- [R14]</li>
 </ul>
 </li>
-<li><strong>Execute</strong><ul>
-<li>Use ALU OR read memory (load) OR write to memory (store)</li>
-</ul>
-</li>
-<li><strong>Writeback</strong><ul>
-<li>Write result to register</li>
-</ul>
-</li>
-</ol>
-<h4 id="registers"><a name="user-content-registers" href="#registers" class="headeranchor-link"  aria-hidden="true"><span class="headeranchor"></span></a>Registers</h4>
-<ul>
-<li>IR: Instruction Register, holds the current instruction</li>
-<li>R0 - R12: General purpose registers</li>
-<li>R13: Stack Pointer</li>
-<li>R14: Link Register</li>
-<li>PC (R15): Program Counter, holds the memory address of the next instruction</li>
-<li>MAR: Memory Access Register, holds the memory address from where to store/load</li>
-<li>MDR: Memory Data Register, holds the value to be stored/loaded</li>
-</ul>
-<p>Example: <code>Load R2, LOC</code></p>
-<ol>
-<li>MAR &lt;- [PC], R/~W = 1, IR &lt;- [MDR], PC &lt;- [PC] + 4</li>
-<li>Recognize that it&rsquo;s a <em>Load</em> command</li>
-<li>Extract LOC from IR</li>
-<li>MAR &lt;- LOC, assert R/~W = 1</li>
-<li>R2 &lt;- [MDR]</li>
-</ol>
-<h2 id="4-instruction-set-architecture"><a name="user-content-4-instruction-set-architecture" href="#4-instruction-set-architecture" class="headeranchor-link"  aria-hidden="true"><span class="headeranchor"></span></a>4. Instruction Set Architecture</h2>
-<h4 id="risc-reduced-instruction-set-computers"><a name="user-content-risc-reduced-instruction-set-computers" href="#risc-reduced-instruction-set-computers" class="headeranchor-link"  aria-hidden="true"><span class="headeranchor"></span></a>RISC (Reduced Instruction Set Computers)</h4>
-<ul>
-<li>Every instruction must use only 1 word</li>
-<li>Memory operands accessed only using Load or Store</li>
-<li>All operands in arithmetic/logic instruction must be in registers</li>
-<li>Easy to pipeline (speed up by overlapping execution)</li>
-</ul>
-<h4 id="cisc-complex-instruction-set-computers"><a name="user-content-cisc-complex-instruction-set-computers" href="#cisc-complex-instruction-set-computers" class="headeranchor-link"  aria-hidden="true"><span class="headeranchor"></span></a>CISC (Complex Instruction Set Computers)</h4>
-<ul>
-<li>Instructions may span multiple words</li>
-<li>Instruction operands can be memory addresses (no more Load/Story architecture)</li>
-<li>Complex instructions such as copy an array of bytes</li>
-<li>Hard to pipeline</li>
-</ul>
-<h2 id="6-memory"><a name="user-content-6-memory" href="#6-memory" class="headeranchor-link"  aria-hidden="true"><span class="headeranchor"></span></a>6. Memory</h2>
-<ul>
-<li>Bit: binary digit</li>
-<li>Byte : 8 bits</li>
-<li>Word: usually 4 bytes</li>
-<li>Big-endian: low addresses represent MSB (like how we write decimal)</li>
-<li>Little-endian: low addresses represent LSB</li>
-<li>Word alignment: can only access memory addresses that are a multiple of 4 (beginning of word)</li>
-<li>If there are n bits in a word, you can only have 2^n bits of memory</li>
 </ul></article></body></html>

@@ -45,7 +45,7 @@ A computer is a programmable device that can store, retrieve, and process data.
 + MAR: Memory Access Register, holds the memory address from where to store/load
 + MDR: Memory Data Register, holds the value to be stored/loaded
 
-Example: *Load R2, LOC*
+Example: `Load R2, LOC`
 
 1. MAR <- [PC], R/~W = 1, IR <- [MDR], PC <- [PC] + 4
 2. Recognize that it's a *Load* command
