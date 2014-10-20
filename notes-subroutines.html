@@ -1000,7 +1000,7 @@ body .markdown-body
   }
 }
 </style><title>notes-subroutines</title></head><body><article class="markdown-body"><h1 id="subroutines"><a name="user-content-subroutines" href="#subroutines" class="headeranchor-link"  aria-hidden="true"><span class="headeranchor"></span></a>Subroutines</h1>
-<h3 id="the-stack"><a name="user-content-the-stack" href="#the-stack" class="headeranchor-link"  aria-hidden="true"><span class="headeranchor"></span></a>The Stack</h3>
+<h3 id="1-the-stack"><a name="user-content-1-the-stack" href="#1-the-stack" class="headeranchor-link"  aria-hidden="true"><span class="headeranchor"></span></a>1. The Stack</h3>
 <ul>
 <li>LIFO</li>
 <li>Each process has a call stack that starts at high memory addresses and grows lower</li>
@@ -1009,7 +1009,7 @@ body .markdown-body
 <li>Eg. push [R0] onto stack: <code>STR R0, [sp, #-4]!</code></li>
 <li>Eg. pop from stack into R0: <code>LDR R0, [sp], #4</code></li>
 </ul>
-<h3 id="calling-a-subroutine"><a name="user-content-calling-a-subroutine" href="#calling-a-subroutine" class="headeranchor-link"  aria-hidden="true"><span class="headeranchor"></span></a>Calling a Subroutine</h3>
+<h3 id="2-calling-a-subroutine"><a name="user-content-2-calling-a-subroutine" href="#2-calling-a-subroutine" class="headeranchor-link"  aria-hidden="true"><span class="headeranchor"></span></a>2. Calling a Subroutine</h3>
 <ul>
 <li>Branch to subroutine instructions and store the return address in the link register</li>
 <li>PC-relative: <code>BL{cond} label</code><ul>
@@ -1031,4 +1031,34 @@ body .markdown-body
 <li>Eg. <code>BX lr</code>: PC &lt;- [R14]</li>
 </ul>
 </li>
+</ul>
+<h3 id="3-loadstore-multiple-instruction"><a name="user-content-3-loadstore-multiple-instruction" href="#3-loadstore-multiple-instruction" class="headeranchor-link"  aria-hidden="true"><span class="headeranchor"></span></a>3. Load/Store Multiple Instruction</h3>
+<ul>
+<li>Allows you to push/pop multiple values onto/from the stack</li>
+<li><code>&lt;op&gt;{mode}{cond} Rn{!}, reglist</code></li>
+<li>op: LDM (load multiple) or STM (store multiple0)</li>
+<li>mode: IA (increment after) or DB (decrement before)</li>
+<li>Rn: Stack Pointer</li>
+<li>!: writeback on or off</li>
+<li>reglist: comma separated list or start-end range</li>
+<li>STMFD = STMDB</li>
+<li>LDMFD = LDMIA</li>
+<li>FD: Full Descending, iterates in reverse order, so it can be read in the original order</li>
+</ul>
+<h3 id="4-aapcs-arm-architecture-procedure-call-standard"><a name="user-content-4-aapcs-arm-architecture-procedure-call-standard" href="#4-aapcs-arm-architecture-procedure-call-standard" class="headeranchor-link"  aria-hidden="true"><span class="headeranchor"></span></a>4. AAPCS: ARM Architecture Procedure Call Standard</h3>
+<ul>
+<li>R0-R3: (Non-preserved) Argument/Result/Scratch registers</li>
+<li>R4-R11: (Preserved) Local Variable</li>
+<li>R12: (Non-preserved) Intra-procedure Scratch register</li>
+<li>R13: (Preserved) Stack Pointer</li>
+<li>R14: (Non-preserved) Link Register</li>
+<li>R15: (Non-preserved) Program Counter</li>
+</ul>
+<h4 id="guidelines"><a name="user-content-guidelines" href="#guidelines" class="headeranchor-link"  aria-hidden="true"><span class="headeranchor"></span></a>Guidelines</h4>
+<ul>
+<li>preserve and restore r4-r11 if you change them</li>
+<li>pop everything you&rsquo;ve pushed onto the stack</li>
+<li>put the return values in R0-R3</li>
+<li>pass arguments through registers</li>
+<li>pass additional arguments in stack</li>
 </ul></article></body></html>
