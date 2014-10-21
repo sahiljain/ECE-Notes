@@ -1051,6 +1051,128 @@ body .markdown-body
 <h3 id="arbitration"><a name="user-content-arbitration" href="#arbitration" class="headeranchor-link"  aria-hidden="true"><span class="headeranchor"></span></a>Arbitration</h3>
 <ul>
 <li>The deciding of which devices become master</li>
-<li>Centralized: one device decides</li>
+<li>Centralized: one device decides<ul>
+<li>eg. Centralized with priorities (using bus request and bus grant signals)<ul>
+<li>First request gets a grant, once request1 goes low, grant1 goes low, then next request is granted</li>
+</ul>
+</li>
+</ul>
+</li>
 <li>Decentralized: devices cooperate to decide</li>
+</ul>
+<h2 id="3-memory-mapped-io"><a name="user-content-3-memory-mapped-io" href="#3-memory-mapped-io" class="headeranchor-link"  aria-hidden="true"><span class="headeranchor"></span></a>3. Memory-Mapped IO</h2>
+<ul>
+<li>Bus addresses used for memory and I/O devices</li>
+<li>Blocks of memory are dedicated to I/O devices</li>
+</ul>
+<h3 id="io-device-bus-interface"><a name="user-content-io-device-bus-interface" href="#io-device-bus-interface" class="headeranchor-link"  aria-hidden="true"><span class="headeranchor"></span></a>I/O Device Bus Interface</h3>
+<p><img alt="Device Bus" src="http://sahiljain.ca/media/devicebus.jpg" /></p>
+<ul>
+<li>Device registers are mapped to specific addresses</li>
+<li>The decoder recognizes the device&rsquo;s addresses</li>
+<li>The control circuit responds to bus transactions</li>
+</ul>
+<h2 id="4-polling-io"><a name="user-content-4-polling-io" href="#4-polling-io" class="headeranchor-link"  aria-hidden="true"><span class="headeranchor"></span></a>4. Polling I/O</h2>
+<ul>
+<li>Program receives/sends data through I/O device by reading/writing to device data registers</li>
+<li>Must repeatedly check (poll) device status register until it is ready (with received data or to send next data)</li>
+<li>Pseudocode<ol>
+<li>Read status register</li>
+<li>Check receive/transmit ready bit (if 1, move to step 3, otherwise go back to step 1)</li>
+<li>Read received data from data reg (buffer) or write data to data register (which changes device&rsquo;s status)</li>
+<li>Process received data, or ready transmit data</li>
+<li>Goto step 1</li>
+</ol>
+</li>
+</ul>
+<h2 id="5-exceptions"><a name="user-content-5-exceptions" href="#5-exceptions" class="headeranchor-link"  aria-hidden="true"><span class="headeranchor"></span></a>5. Exceptions</h2>
+<ul>
+<li>Condition requiring service (not necessarily an error)<ul>
+<li>current execution is suspended</li>
+<li>condition is serviced</li>
+<li>original execution is resumed</li>
+</ul>
+</li>
+</ul>
+<h3 id="cortex-m3-exception-types"><a name="user-content-cortex-m3-exception-types" href="#cortex-m3-exception-types" class="headeranchor-link"  aria-hidden="true"><span class="headeranchor"></span></a>Cortex-M3 Exception Types</h3>
+<ul>
+<li>Reset: Power on</li>
+<li>SVCall: Supervisor Call invokes OS</li>
+<li>Fault: Execution error such as invalid instruction, unaligned memory access</li>
+<li>Interrupt request: request from peripheral device for service</li>
+</ul>
+<h3 id="exception-attributes"><a name="user-content-exception-attributes" href="#exception-attributes" class="headeranchor-link"  aria-hidden="true"><span class="headeranchor"></span></a>Exception Attributes</h3>
+<ul>
+<li>Number: 1-255</li>
+<li>Priority: -3 is the highest (worst), going up to 31 (least bad)</li>
+<li>Vector: Exception handler address (entry point)</li>
+<li>Vector Table: Entry points of exception handlers</li>
+<li>Exception list:<ul>
+<li>Reset: #1, Priority -3</li>
+<li>Non-Maskable-Interrupt: #2, Priority -2, connected to reset/watchdog timer</li>
+<li>HardFault: #3, Priority -1</li>
+<li>MemManage: #4, Priority is configurable from here on out</li>
+<li>BusFault: #5</li>
+<li>SVCall: #11</li>
+<li>IRQ 0: #16</li>
+<li>IRQ 239: #255</li>
+</ul>
+</li>
+</ul>
+<h3 id="operating-modes"><a name="user-content-operating-modes" href="#operating-modes" class="headeranchor-link"  aria-hidden="true"><span class="headeranchor"></span></a>Operating Modes</h3>
+<ol>
+<li>User Mode is the mode in which applications run</li>
+<li>Fast Interrupt Mode (FIQ) entered when external device raises fast interrupt exception</li>
+<li>Ordinary Interrupt Mode (IRQ) entered when external device raises normal interrupt request</li>
+<li>Supervisor Mode (SVC) entered on powerup/reset, or when user program executes Software Interrupt Instruction (SWI)</li>
+<li>Memory Access Violation Mode (Abort) entered when instruction causes memory access violation</li>
+<li>Unimplemented Instruction Mode (Undefined)entered when the current program attempts to execute an unimplemented function</li>
+<li>System Mode</li>
+</ol>
+<ul>
+<li>Modes 2 - 7 (Exception Modes + System Mode) are allowed to change Status Register (CPSR)</li>
+</ul>
+<h3 id="reset"><a name="user-content-reset" href="#reset" class="headeranchor-link"  aria-hidden="true"><span class="headeranchor"></span></a>Reset</h3>
+<ul>
+<li>Occurs on powerup or warm reset</li>
+<li>Special type of exception</li>
+<li>Actions:<ul>
+<li>Loads SP_main into r13 from vector 0</li>
+<li>Sets operating priority to max priority (weakest) + 1</li>
+<li>Executes the code in the Reset Handler (vector 1) using thread mode and priveledged execution</li>
+</ul>
+</li>
+</ul>
+<h3 id="exception-handling"><a name="user-content-exception-handling" href="#exception-handling" class="headeranchor-link"  aria-hidden="true"><span class="headeranchor"></span></a>Exception Handling</h3>
+<ul>
+<li>Exceptions are handled if they have higher priority (stronger) than the current operating priority</li>
+<li>Actions:<ul>
+<li>Save current context on stack (push r0-r3, r12, PC, CPSR, LR)</li>
+<li>Stores EXC_RETURN code in LR indicating operating mode and stack in use</li>
+<li>Loads entry point to handler (from vector table) into PC</li>
+</ul>
+</li>
+<li>Exception return is initiated by loading the EXC_RETURN code into the PC by <code>BX lr</code></li>
+<li>Actions: <ul>
+<li>Code sets operating mode and Stack Pointer</li>
+<li>Restores context from stack (pops r0-r3, r12, PC, CPSR, LR)</li>
+</ul>
+</li>
+<li>Exception handlers can be suspended by exceptions with high priority (nesting exceptions)</li>
+</ul>
+<h3 id="interrupt-controlled-io"><a name="user-content-interrupt-controlled-io" href="#interrupt-controlled-io" class="headeranchor-link"  aria-hidden="true"><span class="headeranchor"></span></a>Interrupt-Controlled I/O</h3>
+<ul>
+<li>Setup:<ul>
+<li>Assign exception number and priority to I/O device</li>
+<li>Write handler (ISR) and save entry point in vector table</li>
+<li>Enable interrupts on I/O device</li>
+<li>Execute application code</li>
+</ul>
+</li>
+</ul>
+<h3 id="open-drain-irq-lines"><a name="user-content-open-drain-irq-lines" href="#open-drain-irq-lines" class="headeranchor-link"  aria-hidden="true"><span class="headeranchor"></span></a>Open Drain IRQ Lines</h3>
+<ul>
+<li>If I/O devices outnumber IRQ lines, then IRQ lines must be shared</li>
+<li>Problem: can&rsquo;t connect CMOS outputs driving at 1 and 0, creates a direct connection between ground and power</li>
+<li>Solutions: open-drain technology</li>
 </ul></article></body></html>
