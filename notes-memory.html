@@ -1023,11 +1023,9 @@ body .markdown-body
 <li><strong>Retains data</strong> on power-off</li>
 </ul>
 <h3 id="11-read-only-memory-rom"><a name="user-content-11-read-only-memory-rom" href="#11-read-only-memory-rom" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>1.1 Read-Only Memory (ROM)</h3>
-<ul>
-<li>Insert romcell.png</li>
-<li>If <strong>p</strong> is <strong>closed</strong>, then <strong>bitline</strong> = 0, <strong>p</strong> is <strong>open</strong>, then <strong>bitline</strong> = 1</li>
-<li>Cost to create mask with pattern of <strong>p</strong>&lsquo;s is high, must make large number of ROM cells</li>
-</ul>
+<p><img alt="ROM Cell" src="http://sahiljain.ca/media/romcell.png" /><br />
++ If <strong>p</strong> is <strong>closed</strong>, then <strong>bitline</strong> = 0, <strong>p</strong> is <strong>open</strong>, then <strong>bitline</strong> = 1<br />
++ Cost to create mask with pattern of <strong>p</strong>&lsquo;s is high, must make large number of ROM cells</p>
 <h3 id="12-programmable-rom-prom"><a name="user-content-12-programmable-rom-prom" href="#12-programmable-rom-prom" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>1.2 Programmable ROM (PROM)</h3>
 <ul>
 <li><strong>p</strong> is a fuse</li>
@@ -1058,11 +1056,145 @@ body .markdown-body
 <li><strong>Loses data</strong> on power-off</li>
 </ul>
 <h3 id="21-static-ram-sram-822"><a name="user-content-21-static-ram-sram-822" href="#21-static-ram-sram-822" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>2.1 Static Ram (SRAM)   (8.2.2)</h3>
+<p><img alt="RAM Cell" src="http://sahiljain.ca/media/ramcell.png" /><br />
++ Read by asserting <strong>word</strong> line, sense <strong>b</strong> line<br />
++ Write by driving <strong>b</strong> and <strong>b&rsquo;</strong><br />
++ Fast (invertors actively drive bit lines)<br />
++ Large area (6 transistors) =&gt; expensive<br />
++ Used for cache memory</p>
+<h3 id="22-dynamic-ram-dram-823"><a name="user-content-22-dynamic-ram-dram-823" href="#22-dynamic-ram-dram-823" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>2.2 Dynamic RAM (DRAM) (8.2.3)</h3>
+<p><img alt="DRAM Cell" src="http://sahiljain.ca/media/dramcell.png" /><br />
++ Uses capacitor<br />
++ C:charged = 1, discharged = 0<br />
++ Write by driving bit line to Vcc or ground<br />
++ Read by sensing bit-line (already charged), write back to amplify<br />
++ 4x slower than SRAM<br />
++ Periodic refresh (10 ms)<br />
++ Small area =&gt; cheaper<br />
++ Used for main memory</p>
+<h2 id="3-classification"><a name="user-content-3-classification" href="#3-classification" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>3. Classification</h2>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Volatile</th>
+<th>Writable</th>
+<th>Erase Size</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ROM</td>
+<td>no</td>
+<td>no</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>PROM</td>
+<td>no</td>
+<td>once</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>EPROM</td>
+<td>no</td>
+<td>yes</td>
+<td>whole chip</td>
+</tr>
+<tr>
+<td>EEPROM</td>
+<td>no</td>
+<td>yes</td>
+<td>byte</td>
+</tr>
+<tr>
+<td>Flash</td>
+<td>no</td>
+<td>yes</td>
+<td>block</td>
+</tr>
+<tr>
+<td>SRAM</td>
+<td>yes</td>
+<td>yes</td>
+<td>byte</td>
+</tr>
+<tr>
+<td>DRAM</td>
+<td>yes</td>
+<td>yes</td>
+<td>byte</td>
+</tr>
+</tbody>
+</table>
+<h2 id="4-memory-chips"><a name="user-content-4-memory-chips" href="#4-memory-chips" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>4. Memory Chips</h2>
+<p><img alt="Memory Chip" src="http://sahiljain.ca/media/memchip.png" /><br />
++ 16 words = 2^4 words, so 4 address pins<br />
++ 8 bits per word, so 8 data pins<br />
++ 2 control pins for R/~W, and CS<br />
++ 2 power pins (Vcc and ground)<br />
++ Decoder asserts word line to enable row</p>
+<h3 id="41-large-memory-chips"><a name="user-content-41-large-memory-chips" href="#41-large-memory-chips" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>4.1 Large Memory Chips</h3>
 <ul>
-<li>Bit cell (see ramcell.png)</li>
-<li>Read by asserting <strong>word</strong> line, sense <strong>b</strong> line</li>
-<li>Write by driving <strong>b</strong> and <strong>b&rsquo;</strong></li>
-<li>Fast (invertors actively drive bit lines)</li>
-<li>Large area (6 transistors) =&gt; expensive</li>
-<li>Used for cache memory</li>
+<li>eg. 2M word x 8-bit (2M = 2^21)</li>
+<li>Requires 21 -&gt; 2^21 decoder (slow!)</li>
+<li>Instead, arrange bit cells in square array (symmetric array)</li>
+<li>
+<p>2^21 words and 2^3 bits/word =&gt; 2^24 bits total (16M)</p>
+</li>
+<li>
+<p>Arrange as 2^12 x 2^12 bits:</p>
+</li>
+<li>4096 x 4096</li>
+<li>Decoder would be 12 -&gt; 2^12</li>
+<li>Each row contains 2^12/2^3 =&gt; 512 words</li>
+<li>512 -&gt; 1 mux required (2^9, so 9 input select pins)</li>
+<li>Address bits would be A20 - A9 (12 bits), and feed to Row Address Strobe to select row</li>
+<li>A8 - A0 fed to mux through Column Address Strobe to select word</li>
+<li>Output is D7 to D0 (bits of data)</li>
+<li>Timing: async DRAM read (2 words)</li>
+</ul>
+<h3 id="42-fast-page-mode-fpm"><a name="user-content-42-fast-page-mode-fpm" href="#42-fast-page-mode-fpm" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>4.2 Fast Page Mode (FPM)</h3>
+<ul>
+<li>Add latch to sense/write circuit that holds entire row</li>
+<li>Only have to select row once if multiple addresses read from same row</li>
+<li>Timing diagram: async DRAM FPM read (2 words)</li>
+<li>DRAM controlled asynchronously by timing ~RAS and ~CAS</li>
+<li>Common until mid-90s</li>
+</ul>
+<h3 id="43-synchronous-dram-sdram"><a name="user-content-43-synchronous-dram-sdram" href="#43-synchronous-dram-sdram" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>4.3 Synchronous DRAM (SDRAM)</h3>
+<ul>
+<li>Control circuit integrated into memory</li>
+<li>Programmed for bursts of 1,2,4,8&hellip; words</li>
+<li>Timing diagram: SDRAM read (2-word burst)</li>
+<li>Takes starting address and produces words in consecutive bus cycles (from same row)</li>
+</ul>
+<h3 id="44-double-data-rate-ddr-sdram"><a name="user-content-44-double-data-rate-ddr-sdram" href="#44-double-data-rate-ddr-sdram" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>4.4 Double Data Rate (DDR) SDRAM</h3>
+<ul>
+<li>Data transferred on rising AND falling edge of bus cycle</li>
+<li>Timing diagram: SDRAM DDR read (2-word burst)</li>
+<li>Memory has two &ldquo;banks&rdquo; timed to different clock edges and data is stripped across banks</li>
+<li>DDR: 2000, DDR2: 2003, DDR3: 2007, DDR4: 2014</li>
+<li>Same principle, just faster circuitry</li>
+<li>Naming convention: PC{2,3,4}-b/w (b/w = bandwith, MB/s)</li>
+<li>eg. PC3-12800 - 800 MHz clock =&gt; 1600M transfers/sec * 8 bytes/transfer = 12800 MB/s</li>
+</ul>
+<h2 id="5-metrics"><a name="user-content-5-metrics" href="#5-metrics" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>5. Metrics</h2>
+<ul>
+<li><strong>Latency</strong>: delay from start until first word produced (eg. 5 cycles)</li>
+<li><strong>Bandwidth</strong>: volume of data per unit time</li>
+<li>eg. word size = 8 bytes, clock speed = 200 MHz, 2 word read</li>
+<li>Async: 2 words * 8 bytes/word * 200 Cycles/sec / 12 cycles = 267 MB/s</li>
+<li>FPM: 2 words * 8 bytes/word * 200 Cycles/sec / 9 cycles = 356 MB/s</li>
+<li>SDRAM: 2 words * 8 bytes/word * 200 Cycles/sec / 7 cycles = 457 MB/s</li>
+<li>DDR: 2 words * 8 bytes/word * 200 Cycles/sec / 6 cycles = 533 MB/s</li>
+</ul>
+<h2 id="6-modules"><a name="user-content-6-modules" href="#6-modules" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>6. Modules</h2>
+<ul>
+<li><strong>DIMM</strong>: dual inline memory module</li>
+<li>Multiple memory chips in a PCB (Printed Circuit Board)</li>
+<li>eg. 1 GB/DIMM with 64M word * 8-bit chips</li>
+<li>2 sides (banks), with 8 chips/side</li>
+<li>Volume = 64MB/chip * 8 chips/side * 2 sides = 1 GB</li>
+<li>Dual-channel: 2 DIMMS side by side =&gt; 128 bits in parallel</li>
 </ul></article></body></html>
